@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>抽签左右排版</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>抽签</title>
 <style>
 :root{
     --bg:#ffffff;
@@ -22,27 +22,18 @@ body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
     background:var(--bg);
     color:var(--text);
-    height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
+    height:100vh;
     transition:.3s;
 }
 .blur{
     filter:blur(12px);
     pointer-events:none;
 }
-.container{
-    display:flex;
-    flex-direction:row;
-    align-items:flex-start;
-    gap:40px;
-    max-width:800px;
-    width:90%;
-}
-.left-panel, .right-panel{
-    flex:1;
-}
+.container{ width:92%; max-width:560px; text-align:center; }
+
 button{
     background:var(--text);
     color:var(--bg);
@@ -51,21 +42,14 @@ button{
     border-radius:10px;
     cursor:pointer;
 }
-#boards{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-    justify-content:flex-start;
-    align-items:flex-start;
-    min-height:60px;
-}
+.hidden{ display:none; }
 
-/* 机械翻牌样式 */
+#boards{ margin:30px 0; }
+
 .flip{
     display:inline-block;
     margin:3px;
-    width:28px;
-    height:42px;
+    width:28px;height:42px;
     perspective:200px;
 }
 .flip-inner{
@@ -133,15 +117,9 @@ button{
 <body>
 
 <div class="container" id="main">
-    <!-- 左侧按钮 -->
-    <div class="left-panel">
-        <button onclick="startDraw()">开始抽签</button>
-        <div id="boards"></div>
-    </div>
-    <!-- 右侧显示 -->
-    <div class="right-panel" id="rightPanel">
-        <!-- 可显示多结果或者其他信息 -->
-    </div>
+    <h2>今日抽签</h2>
+    <button onclick="startDraw()">开始抽签</button>
+    <div id="boards"></div>
 </div>
 
 <!-- Dock -->
@@ -197,18 +175,15 @@ const editPanel=document.getElementById("editPanel");
 const range=document.getElementById("range");
 const rangeVal=document.getElementById("rangeVal");
 
-range.value=multiCount;
-rangeVal.innerText=multiCount;
-
-range.oninput=()=>{
-    multiCount=Number(range.value);
-    rangeVal.innerText=multiCount;
+function save(){
+    localStorage.setItem("items",JSON.stringify(items));
     localStorage.setItem("count",multiCount);
-};
+}
 
 function blur(on){
     main.classList.toggle("blur",on);
 }
+
 function toggleCountPanel(){
     countPanel.classList.toggle("hidden");
     editPanel.classList.add("hidden");
@@ -220,6 +195,14 @@ function toggleEditPanel(){
     blur(!editPanel.classList.contains("hidden"));
     renderList();
 }
+
+range.value=multiCount;
+rangeVal.innerText=multiCount;
+range.oninput=()=>{
+    multiCount=Number(range.value);
+    rangeVal.innerText=multiCount;
+    save();
+};
 
 function toggleDark(){
     document.body.classList.toggle("dark");
@@ -239,13 +222,11 @@ function addItem(){
     if(!v)return;
     items.push(v);
     document.getElementById("newItem").value="";
-    localStorage.setItem("items",JSON.stringify(items));
-    renderList();
+    save();renderList();
 }
 function removeItem(i){
     items.splice(i,1);
-    localStorage.setItem("items",JSON.stringify(items));
-    renderList();
+    save();renderList();
 }
 
 function createBoard(text){
@@ -261,7 +242,6 @@ function createBoard(text){
     });
     return board;
 }
-
 function flipTo(board,text){
     const flips=board.querySelectorAll(".flip");
     flips.forEach((f,i)=>{
@@ -291,6 +271,5 @@ function startDraw(){
     }
 }
 </script>
-
 </body>
 </html>
